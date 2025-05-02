@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		49A775542DC461AC000B477C /* GoogleAPIClientForREST_Sheets in Frameworks */ = {isa = PBXBuildFile; productRef = 49A775532DC461AC000B477C /* GoogleAPIClientForREST_Sheets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		49A775022DC44905000B477C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49A775542DC461AC000B477C /* GoogleAPIClientForREST_Sheets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = "church-schedule-manager";
 			packageProductDependencies = (
+				49A775532DC461AC000B477C /* GoogleAPIClientForREST_Sheets */,
 			);
 			productName = "church-schedule-manager";
 			productReference = 49A774F12DC44904000B477C /* church-schedule-manager.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 49A774E82DC44904000B477C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				49A775522DC461AC000B477C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 49A774F22DC44904000B477C /* Products */;
 			projectDirPath = "";
@@ -593,6 +602,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		49A775522DC461AC000B477C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49A775532DC461AC000B477C /* GoogleAPIClientForREST_Sheets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49A775522DC461AC000B477C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_Sheets;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 49A774E92DC44904000B477C /* Project object */;
 }
