@@ -19,15 +19,10 @@ struct FullScheduleView: View {
     enum SortOption: String, CaseIterable, Identifiable {
         case byDate = "Date"
         case byRole = "Role"
-        case byPerson = "Person"
-        
         var id: String { self.rawValue }
     }
     
     init() {
-        // Create ViewModel with a temporary context
-        // The real context will be assigned in onAppear
-        // Correct version
         let container = try! ModelContainer(for: ScheduleItem.self, Person.self)
         _viewModel = StateObject(wrappedValue: ScheduleViewModel(modelContext: ModelContext(container)))
     }
@@ -41,17 +36,13 @@ struct FullScheduleView: View {
                 } else {
                     List {
                         if let selectedRole = selectedRole {
-                            // Show only items with the selected role
                             roleSection(for: selectedRole)
                         } else {
-                            // Group by date or role based on sort option
                             switch sortOption {
                             case .byDate:
                                 dateGroupedContent
                             case .byRole:
                                 roleGroupedContent
-                            case .byPerson:
-                                personGroupedContent
                             }
                         }
                     }
@@ -85,14 +76,12 @@ struct FullScheduleView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        // Role filter
                         Button(action: {
                             showRoleFilter = true
                         }) {
                             Label("Filter by Role", systemImage: "line.3.horizontal.decrease.circle")
                         }
                         
-                        // Clear filter
                         if selectedRole != nil {
                             Button(action: {
                                 selectedRole = nil
@@ -103,7 +92,6 @@ struct FullScheduleView: View {
                         
                         Divider()
                         
-                        // Sort options
                         Picker("Sort by", selection: $sortOption) {
                             ForEach(SortOption.allCases) { option in
                                 Text(option.rawValue).tag(option)
@@ -114,15 +102,9 @@ struct FullScheduleView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showRoleFilter) {
-                RoleFilterView(
-                    availableRoles: viewModel.availableRoles,
-                    selectedRole: $selectedRole
-                )
-            }
+
             .onAppear {
                 if !hasInitialized {
-                    // Use the environment's modelContext
                     viewModel.updateModelContext(modelContext)
                     hasInitialized = true
                 }
@@ -175,19 +157,6 @@ struct FullScheduleView: View {
         }
     }
     
-    // Group by person
-    private var personGroupedContent: some View {
-        ForEach(groupedByPerson(), id: \.0) { person, items in
-            Section(header: Text(person)) {
-                ForEach(items) { item in
-                    HStack {
-                        Text("\(item.date, format: .dateTime.day().month().year()): \(item.role)")
-                        Spacer()
-                    }
-                }
-            }
-        }
-    }
     
     // Display items for a specific role
     private func roleSection(for role: String) -> some View {
@@ -214,7 +183,7 @@ struct FullScheduleView: View {
     
     private func groupedByDate() -> [(Date, [ScheduleItem])] {
         let grouped = Dictionary(grouping: filteredItems) { item in
-            // Group by date, ignoring time component
+            // Group by date, ignoring time 
             Calendar.current.startOfDay(for: item.date)
         }
         

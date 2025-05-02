@@ -3,12 +3,12 @@ import SwiftData
 
 @main
 struct ChurchScheduleManagerApp: App {
-    // Create the model container
+    // Create model container
     let modelContainer: ModelContainer
     
     init() {
         do {
-            // Define the schema
+            // Define schema
             let schema = Schema([
                 ScheduleItem.self,
                 Person.self
@@ -20,13 +20,13 @@ struct ChurchScheduleManagerApp: App {
                 isStoredInMemoryOnly: false // Set to true if you want in-memory only storage
             )
             
-            // Create the container with the configuration
+            // Create container with the configuration
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             
-            // Create a context to work with the container
+            // Create context to work with the container
             let context = ModelContext(modelContainer)
             
-            // Check if we need to create an initial Person
+            // Check if need to create an initial Person
             let descriptor = FetchDescriptor<Person>()
             if let count = try? context.fetchCount(descriptor), count == 0 {
                 // Create default person with empty name
@@ -35,7 +35,6 @@ struct ChurchScheduleManagerApp: App {
                 try? context.save()
             }
         } catch {
-            // Fallback if container creation fails
             fatalError("Failed to create model container: \(error.localizedDescription)")
         }
     }

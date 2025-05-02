@@ -15,7 +15,7 @@ struct SplashView: View {
             MainView()
         } else {
             VStack {
-                Image(systemName: "cross.fill") // Placeholder for your church logo
+                Image("logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 150, height: 150)
@@ -26,7 +26,6 @@ struct SplashView: View {
                     .padding()
             }
             .onAppear {
-                // Simulate a delay for the splash screen
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     withAnimation {
                         self.isActive = true

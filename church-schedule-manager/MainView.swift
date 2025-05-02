@@ -17,9 +17,7 @@ struct MainView: View {
     @State private var hasInitialized = false
     
     init() {
-        // Create ViewModel with a temporary context
-        // The real context will be assigned in onAppear
-        // Correct version
+
         let container = try! ModelContainer(for: ScheduleItem.self, Person.self)
         _viewModel = StateObject(wrappedValue: ScheduleViewModel(modelContext: ModelContext(container)))
     }
@@ -103,29 +101,7 @@ struct MainView: View {
                             }
                         }
                     }
-                    
-                    // Quick access to specific roles
-                    Section(header: Text("Browse by Role")) {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                ForEach(popularRoles, id: \.self) { role in
-                                    Button(action: {
-                                        selectedRole = role
-                                        showRoleFilter = true
-                                    }) {
-                                        Text(role)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(Color.blue.opacity(0.1))
-                                            .cornerRadius(8)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding(.vertical, 8)
-                        }
-                        .padding(.horizontal, -16)
-                    }
+
                 }
                 
                 if let errorMessage = viewModel.errorMessage {
@@ -151,18 +127,8 @@ struct MainView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        NavigationLink(destination: SettingsView()) {
-                            Label("Settings", systemImage: "gear")
-                        }
-                        
-                        Button(action: {
-                            showRoleFilter = true
-                        }) {
-                            Label("Filter by Role", systemImage: "line.3.horizontal.decrease.circle")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
+                    NavigationLink(destination: SettingsView()) {
+                        Label("Settings", systemImage: "gear")
                     }
                 }
                 
@@ -172,17 +138,7 @@ struct MainView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showRoleFilter) {
-                RoleFilterView(
-                    availableRoles: viewModel.availableRoles,
-                    selectedRole: $selectedRole
-                )
-                .onDisappear {
-                    if let role = selectedRole {
-                        navigateToRoleView(role: role)
-                    }
-                }
-            }
+
             .alert("About Name Detection", isPresented: $showingInfoAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -204,8 +160,6 @@ struct MainView: View {
     }
     
     private func navigateToRoleView(role: String) {
-        // In a more complex app, this would navigate to a role-specific view
-        // For now, we'll just clear the selection
         selectedRole = nil
     }
     
@@ -223,74 +177,5 @@ struct MainView: View {
         return viewModel.getMyScheduleItems(personName: person.name, nameVariations: person.nameVariations)
     }
     
-    // Most commonly used roles for quick access
-    private var popularRoles: [String] {
-        return [
-            "Pengkhotbah Umum",
-            "PEMIMPIN IBADAH",
-            "PIANIS",
-            "SOUND SYSTEM",
-            "TODDLER"
-        ]
-    }
-}
 
-// Role filter view
-struct RoleFilterView: View {
-    let availableRoles: [String]
-    @Binding var selectedRole: String?
-    @Environment(\.dismiss) private var dismiss
-    @State private var searchText = ""
-    
-    var body: some View {
-        NavigationStack {
-            VStack {
-                List {
-                    ForEach(filteredRoles, id: \.self) { role in
-                        Button(action: {
-                            selectedRole = role
-                            dismiss()
-                        }) {
-                            HStack {
-                                Text(role)
-                                Spacer()
-                                if role == selectedRole {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.blue)
-                                }
-                            }
-                        }
-                        .foregroundColor(.primary)
-                    }
-                }
-                .searchable(text: $searchText, prompt: "Search roles")
-            }
-            .navigationTitle("Select Role")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Clear") {
-                        selectedRole = nil
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-    
-    private var filteredRoles: [String] {
-        if searchText.isEmpty {
-            return availableRoles
-        } else {
-            return availableRoles.filter {
-                $0.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
 }
