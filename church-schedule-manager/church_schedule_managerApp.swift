@@ -1,32 +1,37 @@
-//
-//  church_schedule_managerApp.swift
-//  church-schedule-manager
-//
-//  Created by Lemuel Sumardy on 5/1/25.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
-struct church_schedule_managerApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
+struct ChurchScheduleManagerApp: App {
+    // Create the model configuration
+    let modelContainer: ModelContainer
+    
+    init() {
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            // Create the model container
+            modelContainer = try ModelContainer(for: ScheduleItem.self, Person.self)
+            
+            // Create a context to work with the container
+            let context = ModelContext(modelContainer)
+            
+            // Check if we need to create an initial Person
+            let descriptor = FetchDescriptor<Person>()
+            if let count = try? context.fetchCount(descriptor), count == 0 {
+                // Create default person with empty name
+                let defaultPerson = Person()
+                context.insert(defaultPerson)
+                try? context.save()
+            }
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Fallback if container creation fails
+            fatalError("Failed to create model container: \(error.localizedDescription)")
         }
-    }()
-
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(modelContainer)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
